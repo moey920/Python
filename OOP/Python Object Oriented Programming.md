@@ -102,7 +102,27 @@ for phone_number in phone_numbers:
         print("{} \tis valid number".format(phone_number))
 ```
 
+
 ## 클래스
+- 클래스(Class) : 별모양 과자 틀
+- 객체(Object) : 별모양 과자(틀을 이용한 다양한 별모양 과자들이 가능) 2단 케익 별과자 등
+- 인스턴스(Instance) : 객체를 클래스의 인스턴스라고 한다. 
+- 메소드(Method) : 클래스 안의 함수
+
+    - 예시 :
+    ```
+    Class person :
+        팔 다리 몸
+        소화기관 등
+        기능(method)
+            걷는다
+            말한다
+
+    Class person를 이용하여 jone, jane 등을 만든다.
+
+    Class person => John Kim(person) => jr.John kim(John kim) : 상속
+    ```
+- 상속
 
 ### Classes provide a means of bundling data and functionality together. 
 ```
