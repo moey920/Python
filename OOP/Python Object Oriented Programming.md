@@ -194,14 +194,57 @@ print(employee.name)
 
 ### Inheritance allows to define a class that inherits all the methods and properties from another class
 ```
-class Person:
-    def __init__(self, fname, lname):
-        self.firstname = fname
-        self.lastname = lname 
+class Employee:
+    def __init__(self, fname, lname, phone):
+        self.fname = fname
+        self.lname = lname
+        self.email = fname + '.' + lname + '@elice.com'
+        self.phone = phone
+
+    def show_info(self):
+        return 'name: {} {}, email: {}, phone: {}'.format(self.fname, self.lname, self.email, self.phone)
+
+
+class Designer(Employee):
+    def __init__(self, fname, lname, phone, tool):
+        super().__init__(fname, lname, phone)
+        self.tool = tool
+
+    def show_info(self):
+        return 'name: {}, tool: {}, phone: {}'.format(self.fname, self.tool, self.phone)
+
+
+emp_1 = Employee('john', 'kim', '010-1234-1234')
+emp_2 = Employee('elice', 'lee', '010-1234-1234')
+print(emp_1.show_info())
+
+emp_3 = Designer('jane', 'park', '010-1234-1234', 'photoshop')
+print(emp_3.tool)
+print(emp_3.show_info())
 ```
+
+> 연습하기
 ```
-class Student(Person):
-    pass
+class Person :
+    # 생성자(constructor) : 인스턴스가 만들어 질 때 실행되는 메소드
+    def __init__(self, name) :
+        self.name = name
+        print("i'm constructor")
+    def __del__(self) : # 소멸자 : 클래스를 무한히 만들면 메모리에 많은 무리가 간다. 사용 후 메모리를 반납해야한다.
+        print("Bye")
+    def say_hello(self) :
+        print("Hello i'm person")
+
+class Designer(Person) : # 클래스 생성시 상속 받을 것이 없으면 ()없이 사용, 상속하려면 ()안에 부모클래스 이름을 넣음.
+    def __init__(self, name) :
+        super().__init__(name) # super() : 부모클래스의 모든 속성을 가져오겠다
+    
+    # 오버라이딩(상속받은 메소드를 새로운 메소드로 오버라이딩한다.) == 다형성
+    def say_hello(self) :
+        print("Hello, i'm designer")
+
+d1 = Designer('hane')
+d1.say_hello()
 ```
 
 ### Overriding is the property of a class to change the implementation of a method provided by one of its base classes
@@ -217,6 +260,9 @@ class Baby(Person):
 ```
 
 ## 모듈과 패키지
+- function의 모음 : 클래스
+- 클래스의 모음을 모듈이라고 한다.(수백 개의 과자 틀이 담긴 서랍)
+- 모듈의 모음을 패키지라 한다.(틀 서랍 + 식칼 서랍 + 재료 서랍 등)
 
 ### A module is a file containing Python definitions and statements. 
 ```
