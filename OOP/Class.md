@@ -120,9 +120,9 @@ class User:
  ```
  class Post:
     def __init__(self, author, content):
-        if not isinstance(author, User):
+        if not isinstance(author, User): # isinstance() : 인스턴스가 맞는지 확인하는 함수
             return
-        if type(content) is not str:
+        if type(content) is not str: # content의 타입 확인
             return 
  ```
 
@@ -130,5 +130,13 @@ class User:
  class User:
     def __init__(self, year_of_birth):
         if year_of_birth > 2005:
-            raise Exception("Too young") 
+            raise Exception("Too young") # 에러를 발생시키는 코드(안되는 것을 명시)
  ```
+
+ ### 에러와 예외의 차이점
+ 
+ > 에러 : 예상하지 못한 오류
+ > 예외(exception) : 의도하여 발생시킨 오류
+
+### 회원가입을 확인하는 클래스 실습
+
