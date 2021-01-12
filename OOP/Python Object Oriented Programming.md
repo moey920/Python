@@ -122,27 +122,34 @@ for phone_number in phone_numbers:
 
     Class person => John Kim(person) => jr.John kim(John kim) : 상속
     ```
-- 상속
+- 상속, 다형성, 오버라이딩 등..
 
 ### Classes provide a means of bundling data and functionality together. 
 ```
-Class Greeting:
+class Greeting: # 클래스명의 첫 문자는 대문자로 입력한다.
     def say_hello():
         return ‘Hello! elice” 
+
+    def say_bye():
+        return ‘Good bye! elice” 
 ```
 
 ### Class instantiation uses function notation
+> 클래스 인스턴스 만들기
 ```
-Class Greeting:
+class Greeting:
     def say_hello():
-        return ‘Hello! elice”
+        return ‘Hello! elice'
 
 greet = Greeting()
+greet.say_hello() # ‘Hello! elice'
+greet.say_bye() # ‘Good bye! elice'
 ```
 
 ### When a class defines an __init__() method, class instantiation automatically invokes __init__() for the newly-created class instance
+> 클래스 메소드의 첫번째 인자는 반드시 self를 써야한다.(파이썬 규칙)
 ```
-Class Complex:
+class Complex:
     def __init__(self, realpart, imagpart):
         self.r = realpart
         self.i = imagpart
@@ -150,11 +157,28 @@ Class Complex:
 x = Complex(3.0, -4.5) 
 ```
 
+### Constructor
+> 인스턴스가 생성될 때 실행되는 메소드
+```
+class Person :
+    # 생성자(constructor) : 인스턴스가 만들어 질 때 실행되는 메소드
+    def __init__(self, name) :
+        self.name = name
+        print("i'm constructor")
+    def __del__(self) : # 소멸자 : 클래스를 무한히 만들면 메모리에 많은 무리가 간다. 사용 후 메모리를 반납해야한다.
+        print("Bye")
+    def say_hello(self) :
+        print("Hello i'm person")
+
+employee = Person("jane")
+print(employee.name)
+```
+
 ### Method vs Function
 
     - Method
     ```
-    Class Greeting:
+    class Greeting:
         def say_hello():
             return ‘Hello! elice” 
     ```
@@ -170,24 +194,24 @@ x = Complex(3.0, -4.5)
 
 ### Inheritance allows to define a class that inherits all the methods and properties from another class
 ```
-Class Person:
+class Person:
     def __init__(self, fname, lname):
         self.firstname = fname
         self.lastname = lname 
 ```
 ```
-Class Student(Person):
+class Student(Person):
     pass
 ```
 
 ### Overriding is the property of a class to change the implementation of a method provided by one of its base classes
 ```
-Class Person:
+class Person:
     def say_father():
         print(“Father”)
 ```
 ```
-Class Baby(Person):
+class Baby(Person):
     def say_father():
         print(“Papa”)
 ```
