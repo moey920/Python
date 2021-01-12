@@ -140,3 +140,36 @@ class User:
 
 ### 회원가입을 확인하는 클래스 실습
 
+```
+from validators import validate_email
+
+class User:
+    
+    def __init__(self, email, password, name, gender):
+    
+        # 이메일이 형식에 맞는지 확인하고, 설정합니다.
+        if not validate_email(email) :
+            raise ValueError("이메일 형식이 틀렸습니다.")
+        self.email = email
+        
+        # 비밀번호가 조건을 만족하는지 확인하고, 설정합니다.
+        if len(password) < 8 :
+            raise ValueError("비밀번호가 너무 짧습니다.")
+        self.password = password
+        
+        # 사용자의 이름이 조건을 만족하는지 확인하고, 설정합니다.
+        if name == "" :
+            raise ValueError("이름을 입력해 주세요.")
+        self.name = name
+        
+        # 성별이 조건을 만족하는지 확인하고, 설정합니다.
+        if gender not in ["M", "F", "O"] : 
+            raise ValueError("성별을 제대로 선택하세요.")
+        self.gender = gender
+        
+        # 친구 목록을 설정합니다.
+        self.friends = []
+
+User("me@elice.com", "absdeffff", "엘리스", "M")
+```
+
