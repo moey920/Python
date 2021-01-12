@@ -40,4 +40,25 @@ class Post:
     comments = []
     likes = 0
     content = "What are you doing?"
+    ...
+    def like(self, user): # 메소드(클래스 내의 함수, 메소드는 항상 첫 인자로 self를 받는다.)
+        self.likes += 1
+        user.liked_posts.append(self)
 ```
+
+### 생성자
+
+> 모든 클래스의 가장 기본이 되는 메소드, **인스턴스가 처음 만들어질 때 어떻게 세팅할 것인지** 결정
+
+```
+class Post:
+    def __init__(self, author, content):
+    self.author = author
+    self.content = content
+```
+
+### 생성자의 매개변수 vs.클래스의 속성
+
+> 생성자의 매개변수 : 인스턴스 생성 시 입력
+
+> 클래스의 속성 : 실제로 데이터가 저장되는 이름
