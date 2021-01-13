@@ -24,3 +24,40 @@ Cheshire 345678-678901 01098765432
 
 > 원하는 형식의 문자열을 검색할 때 메타문자와 수량자 등 다양한 패턴을 사용하여 매치하고, 
 그룹핑을 이용하여 원하는 부분만 골라내고 re모듈의 메서드로 문자열을 수정할 수도 있다.
+
+## 정규식 객체 - 복잡하고 긴 정규식을 여러번 사용할 때 유용
+
+```
+import re
+
+text = "abcdefg"
+
+pattern = re.compile("e")
+
+print("정규식 객체의 자료형 : ", type(pattern))
+
+print("정규식 객체 사용하는 경우 : ", pattern.findall(text))
+
+print("객체를 사용하지 않는 경우 : ", re.findall("e", text))
+```
+
+> ```re.compile()``` 함수는 문자열 패턴을 컴파일하여 정규식 객체를 반환합니다.
+
+- 어떤 정규식을 코드 내에서 여러 번 사용하고자 할 때 re.compile() 함수로 정규식 객체를 만들어 사용합니다.
+- re 모듈의 함수는 re클래스의 함수도 있지만, 정규식 객체에서 호출하기도 합니다.
+- 10행에서는 pattern 변수의 findall 함수를 호출하고, 12행에서는 re 모듈의 findall 함수를 호출합니다.
+- 함수의 인자도 10행에서는 1개, 12행에서는 2개로 각각 다르다, 그러나 결과값은 동일하다.
+- 이처럼 re.compile() 함수는 정의한 정규표현식을 여러 번 사용할 때 주로 이용
+
+## re 모듈의 대표적인 함수
+
+### 정규식 검사 함수
+
+> 문자열에 대해 정규식으로 검사하는 함수는 대표적으로 re.match(), re.search(), re.findall(), re.finditer() 이렇게 4가지가 있다.
+
+| 함수 이름 | 기능 |
+|:---:|:---:|
+| re.match(pattern, string)	| **string** 시작 부분부터 패턴이 존재하는지 검사하여 MatchObject를 반환함. |
+| re.search(pattern, string) | **string** 전체에서 **pattern**이 존재하는지 검사하여 MatchObject를 반환함. |
+| re.findall(pattern, string) | **string** 전체에서 패턴과 매치되는 모든 경우를 찾아 list로 반환함. |
+| re.finditer(pattern, string) | **string** 전체에서 패턴과 일치하는 결과에 대한 iterater 객체를 반환함. |
