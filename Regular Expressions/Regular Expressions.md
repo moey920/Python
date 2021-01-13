@@ -57,7 +57,7 @@ print("객체를 사용하지 않는 경우 : ", re.findall("e", text))
 
 | 함수 이름 | 기능 |
 |:---:|:---:|
-| re.match(pattern, string)	| **string** 시작 부분부터 패턴이 존재하는지 검사하여 MatchObject를 반환함. |
-| re.search(pattern, string) | **string** 전체에서 **pattern**이 존재하는지 검사하여 MatchObject를 반환함. |
-| re.findall(pattern, string) | **string** 전체에서 패턴과 매치되는 모든 경우를 찾아 list로 반환함. |
-| re.finditer(pattern, string) | **string** 전체에서 패턴과 일치하는 결과에 대한 iterater 객체를 반환함. |
+| re.match(pattern, string)	| **string** **시작 부분부터** 패턴이 존재하는지 검사하여 **MatchObject**를 반환함. |
+| re.search(pattern, string) | **string** 전체에서 **pattern**이 존재하는지 검사하여 **MatchObject**를 반환함. |
+| re.findall(pattern, string) | **string** 전체에서 패턴과 매치되는 모든 경우를 찾아 **list**로 반환함. |
+| re.finditer(pattern, string) | **string** 전체에서 패턴과 일치하는 결과에 대한 **iterater** 객체를 반환함. |
