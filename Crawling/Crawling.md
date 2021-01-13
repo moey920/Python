@@ -22,3 +22,55 @@ soup.find_all("p") # 모든 태그 찾기
 ```
 
 - find(), find_all() 메소드를 이용하여 HTML 태그를 추출할 수 있습니다
+- find는 추출한 HTML 태그 하나를, find_all은 HTML 태그를 여러 개 담고 있는 리스트를 얻습니다.
+
+- 출력 예시 : 
+```
+<p></p>
+[<p></p>, <p></p>, ... , <p></p>]
+```
+
+### 사용 예시 : div 태그 중, 클래스가 elice인 것만 추출하려면 어떻게 해야 할까요?
+```
+<!DOCTYPE html>
+...
+<body>
+    <div class="cheshire">
+        <p>Don't crawl this.</p>
+    </div>
+    <div class="elice">
+        <p>Hello, Python Crawling!</p>
+    </div>
+</body> 
+```
+
+> # class_ 매개변수에 값을 저장함으로써 특정 클래스를 가진 태그를 추출할 수 있습니다
+
+```
+soup.find("div")
+soup.find("div", class_="elice")
+````
+
+- find로 얻은 결과도 BeautifulSoup 객체입니다. 따라서 find를 한 결과에 또 find를 적용할 수 있습니다. 아래 코드는 div 태그 안에 있는 p 태그를 추출합니다
+
+```soup.find("div", class_="elice").find("p")```
+
+- BeautifulSoup 객체에 get_text 메소드를 적용하면 태그가 갖고 있는 텍스트를 얻을 수 있습니다.
+
+```soup.find("div", class_="elice").find("p").get_text()```
+
+> 특정 id의 값을 추출하고자 하는 경우에는 id 매개변수의 값을 지정할 수 있습니다.
+
+```
+soup.find("div")
+soup.find("div", id="elice")
+```
+
+## requests 라이브러리
+
+> requests : Python에서 HTTP 요청을 보낼 수 있는 모듈
+
+> HTTP 요청이란? 
+
+- GET 요청 : 정보를 조회하기 위한 요청 (예 : 네이버 홈페이지에 접속한다. 구글에 키워드를 검색한다.)
+- POST 요청 : 정보를 생성, 변경하기 위한 요청 (예 : 웹 사이트에 로그인한다. 메일을 삭제한다.)
