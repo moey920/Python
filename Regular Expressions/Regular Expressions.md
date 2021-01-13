@@ -61,3 +61,16 @@ print("객체를 사용하지 않는 경우 : ", re.findall("e", text))
 | re.search(pattern, string) | **string** 전체에서 **pattern**이 존재하는지 검사하여 **MatchObject**를 반환함. |
 | re.findall(pattern, string) | **string** 전체에서 패턴과 매치되는 모든 경우를 찾아 **list**로 반환함. |
 | re.finditer(pattern, string) | **string** 전체에서 패턴과 일치하는 결과에 대한 **iterater** 객체를 반환함. |
+
+### 문자열 수정 함수
+
+> re 모듈에는 패턴과 매치된 문자열을 찾아줄 뿐만 아니라, 편집할 수 있는 함수들도 존재
+
+| 함수 이름 | 기능 |
+|:---:|:---:|
+| re.sub(pattern, repl, string)	| **string** 에서 **pattern과 매칭**되는 부분을 **repl로 수정**한 문자열을 반환함. |
+| re.subn(pattern, repl, string) | ```re.sub()```과 동일하지만, 함수의 결과를 ```(결과 문자열, 교체 횟수)```꼴의 튜플로 반환함. |
+
+#### 파이썬 정규표현식 공식 문서 
+
+> <https://docs.python.org/3/library/re.html>
