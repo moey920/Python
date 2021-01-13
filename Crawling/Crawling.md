@@ -75,10 +75,25 @@ soup.find("div", id="elice")
 - GET 요청 : 정보를 조회하기 위한 요청 (예 : 네이버 홈페이지에 접속한다. 구글에 키워드를 검색한다.)
 - POST 요청 : 정보를 생성, 변경하기 위한 요청 (예 : 웹 사이트에 로그인한다. 메일을 삭제한다.)
 
-- 예시 : 지정한 URL로 GET 요청을 보냈고, 서버에서는 요청을 받아 처리한 후 result 변수에 응답을 보냅니다.
+> 예시 : 지정한 URL로 GET 요청을 보냈고, 서버에서는 요청을 받아 처리한 후 result 변수에 응답을 보냅니다.
+
 ```
 url = "https://www.google.com"
 result = requests.get(url)
 ```
 
-> 
+> 응답의 status_code로는 요청의 결과를 알 수 있습니다. 만약 요청이 성공했다면 text로 해당 웹 사이트의 HTML을 얻을 수 있습니다.
+
+```
+print(result.status_code)
+print(result.text)
+```
+
+> requests와 BeautifulSoup를 조합하여 웹 페이지의 HTML을 분석할 수 있습니다.
+```
+soup = BeautifulSoup(result.text, "html.parser")
+```
+
+### 크롤링 실습
+
+> 네이버 헤드뉴스 찾기
