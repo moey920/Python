@@ -127,6 +127,81 @@ https://news.naver.com/main/list.nhn?sid1=100
 - 따라서, 기사 본문을 싸고 있는 div 태그의 children을 얻고,  각 children의 name이 None인 요소만 추출해야 합니다.
 - 그 뿐만 아니라 HTML 문서에 적혀있는 주석도 걸림돌이 될 수 있으므로 어려울 수 있는 실습입니다.
 
+```
+import requests
+from bs4 import BeautifulSoup
+
+def crawling(soup) :
+    # 기사에서 내용을 추출하고 반환하세요.
+    div = soup.find('div', class_="_article_body_contents")
+    
+    result = div.get_text().replace('\n', '').replace('flash 오류를 우회하기 위한 함수 추가function _flash_removeCallback() {}', '').replace('\t', '')
+    
+    return result
+
+def get_href(soup) :
+    # 각 분야별 속보 기사에 접근할 수 있는 href를 리스트로 반환하세요.
+    result = []
+    ul = soup.find("ul", class_="type06_headline")
+    for a in ul.find_all("a", class_="nclicks(fls.list)") :
+        result.append(a["href"])
+        
+    return result
+    
+
+def get_request(section) :
+    # 입력된 분야에 맞는 request 객체를 반환하세요.
+    # 아래 url에 쿼리를 적용한 것을 반환합니다.
+    custom_header = {
+        'referer' : 'https://www.naver.com/',
+        'user-agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
+    }
+    
+    url = "https://news.naver.com/main/list.nhn"
+    
+    sections = {
+        "정치" : 100,
+        "경제" : 101,
+        "사회" : 102,
+        "생활" : 103,
+        "세계" : 104,
+        "과학" : 105
+    }
+    
+    req = requests.get(url, headers = custom_header, params = {"sid1" : sections[section]}) # params 매개변수를 올바르게 설정하세요.
+    
+    return req
+
+    
+
+def main() :
+    custom_header = {
+        'referer' : 'https://www.naver.com/',
+        'user-agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
+    }
+    
+    list_href = []
+    result = []
+    
+    # 섹션을 입력하세요.
+    section = input('"정치", "경제", "사회", "생활", "세계", "과학" 중 하나를 입력하세요.\n  > ')
+    
+    req = get_request(section)
+    soup = BeautifulSoup(req.text, "html.parser")
+    
+    list_href = get_href(soup)
+    
+    for href in list_href :
+        href_req = requests.get(href, headers = custom_header)
+        href_soup = BeautifulSoup(href_req.text, "html.parser")
+        result.append(crawling(href_soup))
+    print(result)
+
+
+if __name__ == "__main__" :
+    main()
+```
+
 > 네이버 영화 페이지 특정 영화 리뷰 추출하기
 
 - 이번에는 정보를 얻고자 하는 영화의 제목이 입력으로 주어지고, 해당 영화에 대한 리뷰 결과를 보여주어야 합니다.
@@ -136,3 +211,62 @@ https://news.naver.com/main/list.nhn?sid1=100
         - requests.get 메소드의 params 매개변수를 이용해도 되지만,이번에는 문자열의 결합을 이용하는 편이 더 간편하기 때문에 get_url은 문자열의 결합을 이용하여 URL을 만듭니다.
     2. get_href는 검색 결과, 가장 위에 있는 영화의 href를 반환합니다.
     3. 마지막으로 crawling 함수를 구현하여 get_href에서 얻은 영화의 href로 접근하고, 해당 영화의 리뷰 목록을 크롤링하세요.
+```
+import requests
+from bs4 import BeautifulSoup
+
+def crawling(soup) :
+    # soup 객체에서 추출해야 하는 정보를 찾고 반환하세요.
+    # 1장 실습의 영화 리뷰 추출 방식과 동일합니다.
+    result = []
+    ul = soup.find("ul", class_="rvw_list_area")
+    
+    for li in ul.find_all("li") :
+        result.append(li.find("strong").get_text())
+        
+    return result
+    
+def get_href(soup) :
+    # 검색 결과, 가장 위에 있는 영화로 접근할 수 있는 href를 반환하세요.
+    ul = soup.find("ul", class_="search_list_1")
+    
+    a = ul.find("a")
+    
+    href = a["href"].replace("basic", "review")
+    
+    return "https://movie.naver.com/" + href
+
+def get_url(movie) :
+    # 입력된 영화를 검색한 결과의 url을 반환하세요.
+    return f"https://movie.naver.com/movie/search/result.nhn?query={movie}&section=all&ie=utf8"
+    
+def main() :
+    list_href = []
+    
+    custom_header = {
+        'referer' : 'https://www.naver.com/',
+        'user-agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
+    }
+    
+    # 섹션을 입력하세요.
+    movie = input('영화 제목을 입력하세요. \n  > ')
+    
+    url = get_url(movie)
+    print(url)
+    req = requests.get(url, headers = custom_header)
+    soup = BeautifulSoup(req.text, "html.parser")
+    
+    movie_url = get_href(soup)
+    print(movie_url)
+    
+    href_req = requests.get(movie_url)
+    href_soup = BeautifulSoup(href_req.text, "html.parser")
+    
+    list_href = crawling(href_soup)
+    print(list_href)
+    
+
+
+if __name__ == "__main__" :
+    main()
+```
