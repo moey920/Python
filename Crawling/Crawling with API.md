@@ -45,3 +45,127 @@ custom_header = {
 'referer’ : ...
 'user-agent’ : ... }
 ```
+
+### API를 이용한 데이터 크롤링 예시(네이버 실시간 검색어, 망고플레이트 검색 상위권 리뷰)
+```
+import requests
+import json            #json import하기
+
+#custom_header을 통해 아닌 것 처럼 위장하기
+custom_header = {
+    'referer' : 'https://www.naver.com/',
+    'user-agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'  }
+
+
+def get_keyword_ranking() : 
+    result = []
+    url = "https://apis.naver.com/mobile_main/srchrank/srchrank?frm=main&ag=20s&gr=0&ma=-2&si=-2&en=-2&sp=-2"
+    req = requests.get(url, headers = custom_header)
+    
+    
+    if req.status_code == requests.codes.ok:
+        print("접속 성공")
+        data = json.loads(req.text)
+        data = data["data"]
+        
+        for d in data :
+            if len(d["keyword_synonyms"]) == 0 :
+                result.append([d["keyword"], None])
+            else :
+                result.append([d["keyowrd"], d["keyword_synonyms"]])
+        
+    else:
+        print("Error code")
+    
+    
+    return result
+
+def main() :
+    result = get_keyword_ranking()
+    i = 1
+    for keyword, synonyms in result :
+        if synonyms :
+            print(f"{i}번째 검색어 : {keyword}, 연관검색어 : {synonyms}")
+        else :
+            print(f"{i}번째 검색어 : {keyword}")
+        i += 1
+    
+if __name__ == "__main__" :
+    main()
+```
+
+```
+from bs4 import BeautifulSoup
+import requests
+import json            #json import하기
+
+custom_header = {
+    'referer' : 'https://www.mangoplate.com/',
+    'user-agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36' }
+
+def get_reviews(code) :
+    comments = []
+    
+
+    url = f"https://stage.mangoplate.com/api/v5{code}/reviews.json?language=kor&device_uuid=V3QHS15862342340433605ldDed&device_type=web&start_index=0&request_count=5&sort_by=2"
+    req = requests.get(url, headers = custom_header)
+
+    if req.status_code == requests.codes.ok:    
+        print("접속 성공")
+        reviews = json.loads(req.text)
+
+        for review in reviews :
+            comment = review["comment"]
+            text = comment["comment"]
+            comments.append(text)
+
+    else:
+        print("Error code")
+
+        
+    return comments
+    
+    # req에 데이터를 불러온 결과가 저장되어 있습니다.
+    # JSON으로 저장된 데이터에서 댓글을 추출하여 comments에 저장하고 반환하세요.
+    
+    
+    
+
+def get_restaurants(name) :
+    # 검색어 name이 들어왔을 때 검색 결과로 나타나는 식당들을 리스트에 담아 반환하세요.
+    restaurant_list = []
+    
+    url = "https://www.mangoplate.com/search/" + name
+    req = requests.get(url, headers = custom_header)
+    soup = BeautifulSoup(req.text, "html.parser")
+    
+    restaurants = soup.find_all("div", class_="list-restaurant-item")
+    
+    for rest in restaurants :
+        info = rest.find("div", class_="info")
+        href = info.find("a")["href"]
+        title = info.find("h2").get_text().replace("\n", "").replace(" ", "")
+        restaurant_list.append([title, href])
+    
+    return restaurant_list
+    
+    # soup에는 특정 키워드로 검색한 결과의 HTML이 담겨 있습니다.
+    # 특정 키워드와 관련된 음식점의 이름과 href를 튜플로 저장하고,
+    # 이름과 href를 담은 튜플들이 담긴 리스트를 반환하세요.
+    
+    
+
+def main() :
+    name = input("검색어를 입력하세요 : ")
+    
+    restuarant_list = get_restaurants(name)
+    
+    for r in restuarant_list :
+        print(r[0])
+        print(get_reviews(r[1]))
+        print("="*30)
+        print("\n"*2)
+
+if __name__ == "__main__" :
+    main()
+```
