@@ -35,13 +35,12 @@ code = ... # 영화 코드에 대한 정보를 얻는다.
 result = requests.get(url, params = {'movie':code})
 ```
 
-Tag Attribute
-태그와 속성
-HTML에는 여러 종류의 태그와,
-태그에 특정 기능이나 유형을 적용하는 속성이 있습니다.
-<div class=“elice” id=“title”>제목</div>
-태그 속성 속성
-태그와 속성
+## Tag Attribute
+
+### 태그와 속성
+> HTML에는 여러 종류의 태그와, 태그에 특정 기능이나 유형을 적용하는 속성이 있습니다.
+```<div(태그) class(속성)=“elice” id(속성)=“title”>제목</div>```
+
 어떤 태그의 속성이 무엇이 있는지 확인할 때는
 attrs 멤버변수를 출력합니다.
 div = soup.find("div")
