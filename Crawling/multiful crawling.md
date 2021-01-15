@@ -41,55 +41,54 @@ result = requests.get(url, params = {'movie':code})
 > HTML에는 여러 종류의 태그와, 태그에 특정 기능이나 유형을 적용하는 속성이 있습니다.
 ```<div(태그) class(속성)=“elice” id(속성)=“title”>제목</div>```
 
-어떤 태그의 속성이 무엇이 있는지 확인할 때는
-attrs 멤버변수를 출력합니다.
+> 어떤 태그의 속성이 무엇이 있는지 확인할 때는 attrs 멤버변수를 출력합니다.
+```
 div = soup.find("div")
 print(div.attrs)
-태그와 속성
-attrs 딕셔너리의 키로 인덱싱하여,
-태그의 속성에 접근할 수 있습니다.
-print(div['class'])
-href 속성
-a 태그는 하이퍼링크를 걸어주는 태그로써
-이동할 URL을 href 속성에 담고 있습니다.
-<a href=“https...”>기사 제목</a>
-href 속성
-위와 같이 href 속성을 이용하여
-웹 페이지에 존재하는 하이퍼링크의 URL을 얻을 수 있습니다.
+```
+
+> attrs 딕셔너리의 키로 인덱싱하여, 태그의 속성에 접근할 수 있습니다.
+```print(div['class'])```
+
+> href 속성 : a 태그는 하이퍼링크를 걸어주는 태그로써 이동할 URL을 href 속성에 담고 있습니다.
+```<a href=“https...”>기사 제목</a>```
+
+- 위와 같이 href 속성을 이용하여 웹 페이지에 존재하는 하이퍼링크의 URL을 얻을 수 있습니다.
+```
 a = soup.find("a")
 href_url = a["href"]
-Children, Name
-Children, Name
-웹 사이트의 구조가 복잡한 경우
-다양한 옵션을 적용해야 할 수도 있습니다.
-children은 어떤 태그가 포함하고 있는 태그를,
-name은 어떤 태그의 이름을 의미하는 속성입니다.
-Children
-<div>
-<span>span1</span>
-<span>span2</span>
-<p>p tag</p>
-<img ... />
+```
+
+## Children, Name
+
+### Children, Name
+- 웹 사이트의 구조가 복잡한 경우 다양한 옵션을 적용해야 할 수도 있습니다.
+- children은 **어떤 태그가 포함하고 있는 태그**를, name은 **어떤 태그의 이름**을 의미하는 속성입니다.
+> Children
+```
+<div> # children : span, span, p, img
+    <span>span1</span> #name : span
+    <span>span2</span>
+    <p>p tag</p>
+    <img ... />
 </div>
-옆의 div 태그는
-여러 태그들을 갖고 있습니다.
-Children
-beautifulsoup의 children 속성으로
-어떤 태그가 포함하고 있는 태그들도 조회할 수 있습니다.
-Children
-위의 코드는 어떤 div 태그를 찾고,
-그 div 태그에 포함된 태그들의 리스트를 얻는 코드입니다.
-soup.find("div").children
-#span, p, img 태그를 갖는 리스트를 얻습니다.
-Name
-어떤 태그의 이름을 알고 싶다면 name 속성을 이용할 수 있습니다.
-태그가 존재하지 않는 경우 None 값을 얻습니다.
+```
+
+- beautifulsoup의 children 속성으로 어떤 태그가 포함하고 있는 태그들도 조회할 수 있습니다.
+
+- 아래 코드는 어떤 div 태그를 찾고, 그 div 태그에 포함된 태그들의 리스트를 얻는 코드입니다.
+```soup.find("div").children # span, p, img 태그를 갖는 리스트를 얻습니다.```
+
+> Name : 어떤 태그의 이름을 알고 싶다면 name 속성을 이용할 수 있습니다. 태그가 존재하지 않는 경우 None 값을 얻습니다.
+```
 children = soup.find("div").children
 for child in children :
 print(child.name)
 # span, span, p, img가 각각 출력됩니다.
-실전 크롤링
-실전 크롤링
+```
+
+## 실전 크롤링
+
 배운 내용으로 크롤링 코드를 직접 작성해보도록 하겠습니다.
 여러 페이지의 기사 제목 수집하기
 동아스포츠의 연예부 기사의
