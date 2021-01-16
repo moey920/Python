@@ -207,41 +207,259 @@ if __name__ == "__main__":
 
 주어진 text 변수, 또는 자유롭게 text 변수의 값을 설정하여 mecab 모듈의 함수를 사용해보세요.
 
-
 ##[실습5]
 형태소 추출하기
-[실습6]
-형태소를 추출한
-워드클라우드 출력하기
-여러 개의 기사 내용 크롤링하기
+
+```
+from mecab import MeCab
+mecab = MeCab()
+
+
+text = "광화문역 주변에 있는 맛집을 알고 싶어요. 정보를 얻을 수 있을까요?"
+
+# 1. 형태소 별로 나눠 출력해보기
+print(mecab.morphs(text))
+
+# 2. 명사만 출력해보기
+print(mecab.nouns(text))
+
+# 3. 형태소 별로 나누고 품사 출력해보기
+print(mecab.pos(text))
+```
+
+```
+from collections import Counter
+from string import punctuation
+import mecab
+mecab = mecab.MeCab()
+
+def count_word_freq(data) :
+    _data = data.lower()
+    
+    for p in punctuation :
+        _data = _data.replace(p, "")
+    
+    # 명사를 추출하세요.
+    # _data = mecab.morphs(_data)
+    _data = mecab.nouns(_data)
+
+    counter = Counter(_data)
+    
+    return counter
+```
+
+## [실습6, 7] : 여러 개의 기사 내용 크롤링하기
 하나의 기사만으로는 단어의 빈도수를 파악하기 어려울 수 있습니다.
 기사의 분량, 기자의 성향 등 여러 요인이 반영되기 때문입니다.
-여러 개의 기사 내용 크롤링하기
+
 따라서 공통된 주제에 대한 여러 기사의 텍스트 데이터를 같이 분석하면
 효과적인 워드클라우드를 출력할 수 있습니다.
-여러 개의 기사 내용 크롤링하기
+
 네이버 뉴스 페이지는 관련된 주제의
 여러 기사를 묶어서 보여주고 있습니다.
-여러 개의 기사 내용 크롤링하기
+
 각각의 분야(정치, 경제, 사회, 생활, 세계, 과학)에 대해
 페이지 최상단에 보이는 주제에 해당하는 기사들의
 텍스트 데이터로 워드클라우드를 출력해봅시다.
-[실습7]
-여러 개의 기사 내용 크롤링하기
-[실습8]
-여러 개의 기사 내용으로
-워드클라우드 출력하기
-더 많은 기사 내용 크롤링하기
-이전 실습으로 각 주제마다 3~4개 기사의
-텍스트 데이터를 크롤링 할 수 있게 되었습니다.
-이 상태에서, 더 많은 기사의 내용을 크롤링하면
-텍스트 데이터를 풍부하게 만들 수 있습니다.
-기사 페이지에서 더 많은 기사를 확인할 수 있습니다.
-더 많은 기사 내용 크롤링하기
-세부 페이지에서 더 많은 기사에 각각 접근하실 수 있습니다.
-더 많은 기사 내용 크롤링하기
-[실습9]
-더 많은 기사 내용 크롤링하기
+
+> 지시사항
+- 네이버 뉴스 페이지는 관련된 주제에 따라 여러 개의 기사를 묶어서 보여주고 있습니다.
+- 이번에는 각 분야(예 : 정치, 경제 등) 별 페이지에서 가장 상단에 보이는 주제(예 : 트럼프, 알지만 말할 수 없어) 에 해당하는 기사들의 텍스트 데이터를 크롤링하세요.
+
+```
+import requests
+from bs4 import BeautifulSoup
+
+
+def crawling(soup):
+    # 기사에서 내용을 추출하고 반환하세요.
+    div = soup.find('div', class_="_article_body_contents")
+    
+    result = div.get_text().replace('\n', '').replace('// flash 오류를 우회하기 위한 함수 추가function _flash_removeCallback() {}', '').replace('\t', '')
+    
+    return result
+
+
+def get_href(soup): # 4개의 본문을 가져오는 방법
+    result = []
+    
+    cluster_body = soup.find("div", class_="cluster_body") # 안에 기사 4개존재
+    cluster_texts = cluster_body.find_all("div", class_='cluster_text')
+    
+    for cluster_text in cluster_texts :
+        a = cluster_text.find("a")
+        result.append(a["href"])
+    
+    # print(result)
+    return result
+
+
+def get_request(section, custom_header):
+    url = "https://news.naver.com/main/main.nhn"
+    section_dict = { "정치" : 100,
+                     "경제" : 101,
+                     "사회" : 102,
+                     "생활" : 103,
+                     "세계" : 104,
+                     "과학" : 105 }
+    return requests.get(url, params={"sid1":section_dict[section]}, headers=custom_header) # url의 시드 값을 받는다. 1개의 리스트에 4개의 url
+
+
+def main():
+    custom_header = {'user-agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'}
+    list_href = []
+    result = []
+    
+    # 섹션을 입력하세요.
+    section = input('"정치", "경제", "사회", "생활", "세계", "과학" 중 하나를 입력하세요.\n  > ')
+    
+    req = get_request(section, custom_header)
+    soup = BeautifulSoup(req.text, "html.parser")
+    
+    list_href = get_href(soup)
+    
+    for href in list_href :
+        href_req = requests.get(href, headers=custom_header)
+        href_soup = BeautifulSoup(href_req.text, "html.parser")
+        result.append(crawling(href_soup))
+    print(result)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+
+## [실습8] : 여러 기사 크롤링 후 워드 클라우드 만들기
+```
+import requests
+from bs4 import BeautifulSoup
+from wc import create_word_cloud
+
+
+def crawling(soup):
+    # 기사에서 내용을 추출하고 반환하세요.
+    div = soup.find('div', class_="_article_body_contents")
+    
+    result = div.get_text().replace('\n', '').replace('// flash 오류를 우회하기 위한 함수 추가function _flash_removeCallback() {}', '').replace('\t', '')
+    
+    return result
+
+
+def get_href(soup):
+    result = []
+    
+    cluster_body = soup.find("div", class_ = "cluster_body")
+    
+    for cluster_text in cluster_body.find_all("div", class_ = "cluster_text") :
+        result.append(cluster_text.find("a")["href"])
+    
+    return result
+
+
+def get_request(section, custom_header):
+    url = "https://news.naver.com/main/main.nhn"
+    section_dict = { "정치" : 100,
+                     "경제" : 101,
+                     "사회" : 102,
+                     "생활" : 103,
+                     "세계" : 104,
+                     "과학" : 105 }
+    return requests.get(url, params={"sid1":section_dict[section]}, headers=custom_header)
+
+
+def main():
+    custom_header = {'user-agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'}
+    list_href = []
+    result = []
+    
+    # 섹션을 입력하세요.
+    section = input('"정치", "경제", "사회", "생활", "세계", "과학" 중 하나를 입력하세요.\n  > ')
+    
+    req = get_request(section, custom_header)
+    soup = BeautifulSoup(req.text, "html.parser")
+    
+    list_href = get_href(soup)
+    
+    for href in list_href :
+        href_req = requests.get(href, headers=custom_header)
+        href_soup = BeautifulSoup(href_req.text, "html.parser")
+        result.append(crawling(href_soup))
+    
+    text = " ".join(result)
+    create_word_cloud(text)
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+
+## [실습9] : 여러 페이지를 url을 통해 이동해서 최종페이지로 이동하는 코드(link따라 들어가기)
+```
+import requests
+from bs4 import BeautifulSoup
+
+
+def crawling(soup):
+    # 기사에서 내용을 추출하고 반환하세요.
+    div = soup.find('div', class_="_article_body_contents")
+    
+    result = div.get_text().replace('\n', '').replace('// flash 오류를 우회하기 위한 함수 추가function _flash_removeCallback() {}', '').replace('\t', '')
+    
+    return result
+    
+
+def get_href(soup, custom_header): # url을 한번 타고 들어가서 상세 페이지의 n개의 기사를 크롤링 한다.
+    result = []
+    
+    cluster_head = soup.find("h2", class_="cluster_head_topic")
+    href = cluster_head.find("a")["href"]
+    
+    url = "https://news.naver.com" + href
+    
+    req = requests.get(url, headers = coutom_headers)
+    new_soup = BeautifulSoup(req.text, "html.parser") # 새로운 url에서 정보를 가져오는 방법, 첫 soup로 뉴스 섹션별 홈페이지로 이동한거고, 두번째 soup로 해당 섹션의 메인 관련뉴스 url을 통해 들어온 것이다.
+    
+    
+    return result
+
+
+def get_request(section, custom_header):
+    url = "https://news.naver.com/main/main.nhn"
+    section_dict = { "정치" : 100,
+                     "경제" : 101,
+                     "사회" : 102,
+                     "생활" : 103,
+                     "세계" : 104,
+                     "과학" : 105 }
+    return requests.get(url, params={"sid1":section_dict[section]}, headers=custom_header)
+
+
+def main():
+    custom_header = {'user-agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'}
+    list_href = []
+    result = []
+    
+    # 섹션을 입력하세요.
+    section = input('"정치", "경제", "사회", "생활", "세계", "과학" 중 하나를 입력하세요.\n  > ')
+    
+    req = get_request(section, custom_header)
+    soup = BeautifulSoup(req.text, "html.parser")
+    
+    list_href = get_href(soup, custom_header)
+    
+    for href in list_href :
+        href_req = requests.get(href, headers=custom_header)
+        href_soup = BeautifulSoup(href_req.text, "html.parser")
+        result.append(crawling(href_soup))
+    print(result)
+
+
+if __name__ == "__main__":
+    main()
+```
 [실습10]
 더 많은 기사로
 워드클라우드 출력하기
