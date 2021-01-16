@@ -557,3 +557,158 @@ def main():
 if __name__ == "__main__" :
     main()
 ```
+
+
+## 취업 응원 메세지 전체 코드
+```
+# 그래프에 필요한 라이브러리를 불러옵니다. 
+import matplotlib.pyplot as plt
+
+# 워드 클라우드에 필요한 라이브러리를 불러옵니다. 
+import numpy as np
+from PIL import Image
+from wordcloud import WordCloud, ImageColorGenerator, get_single_color_func
+
+# 특화된 컨테이너 모듈에서 수 세기를 돕는 메소드를 불러옵니다.
+from collections import Counter
+
+# 엘리스에서 파일 송출에 필요한 패키지를 불러옵니다. 
+from elice_utils import EliceUtils
+elice_utils = EliceUtils()
+
+
+# 추가할 문장을 입력하세요.
+WORD1 = "k-digital training"
+WORD2 = "응원합니다 ♥"
+
+
+# 추가할 문장의 색을 지정하세요.
+WORD_COLOR = "red"
+
+
+class SimpleGroupedColorFunc(object):
+    """Create a color function object which assigns EXACT colors
+       to certain words based on the color to words mapping
+       Parameters
+       ----------
+       color_to_words : dict(str -> list(str))
+         A dictionary that maps a color to the list of words.
+       default_color : str
+         Color that will be assigned to a word that's not a member
+         of any value from color_to_words.
+    """
+
+    def __init__(self, color_to_words, default_color):
+        self.word_to_color = {word: color
+                              for (color, words) in color_to_words.items()
+                              for word in words}
+
+        self.default_color = default_color
+
+    def __call__(self, word, **kwargs):
+        return self.word_to_color.get(word, self.default_color)
+
+
+class GroupedColorFunc(object):
+    """Create a color function object which assigns DIFFERENT SHADES of
+       specified colors to certain words based on the color to words mapping.
+       Uses wordcloud.get_single_color_func
+       Parameters
+       ----------
+       color_to_words : dict(str -> list(str))
+         A dictionary that maps a color to the list of words.
+       default_color : str
+         Color that will be assigned to a word that's not a member
+         of any value from color_to_words.
+    """
+
+    def __init__(self, color_to_words, default_color):
+        self.color_func_to_words = [
+            (get_single_color_func(color), set(words))
+            for (color, words) in color_to_words.items()]
+
+        self.default_color_func = get_single_color_func(default_color)
+
+    def get_color_func(self, word):
+        """Returns a single_color_func associated with the word"""
+        try:
+            color_func = next(
+                color_func for (color_func, words) in self.color_func_to_words
+                if word in words)
+        except StopIteration:
+            color_func = self.default_color_func
+
+        return color_func
+
+    def __call__(self, word, **kwargs):
+        return self.get_color_func(word)(word, **kwargs)
+
+
+def load_data():
+    # 사용할 데이터를 불러옵니다.
+    from k_digital import words
+    
+    word1 = WORD1
+    word2 = WORD2
+    
+    words[word1] = 23000
+    words[word2] = 23000
+    
+    return words
+
+
+# wordcloud 패키지를 이용해 워드클라우드를 생성합니다.
+def create_word_cloud(words):
+    cloud = WordCloud(
+        font_path='font/NanumGothic.ttf', 
+        background_color='white',
+        width=1920,
+        height=1080,
+        mask=np.array(Image.open('star.png')),
+    )
+    
+    color_to_words = {
+        WORD_COLOR : [WORD1, WORD2]
+    }
+    
+    default_color = '#524fa1'
+    
+    # 단색으로 설정 - single tones
+    grouped_color_func = SimpleGroupedColorFunc(color_to_words, default_color)
+    
+    # 그룹색으로 설정 - multiple tones
+    #grouped_color_func = GroupedColorFunc(color_to_words, default_color)
+    
+    cloud.fit_words(words)
+    cloud.recolor(color_func=grouped_color_func)
+    cloud.to_file('cloud.png')
+    
+    print()
+    print("워드 클라우드가 생성되었습니다!")
+    spinner.stop()
+    elice_utils.send_image('cloud.png')
+
+
+def main():
+    print("워드 클라우드를 생성합니다.", end="")
+    spinner.start()
+    words = load_data()
+    
+    
+    create_word_cloud(words)
+
+
+# main 함수를 실행합니다. 
+if __name__ == '__main__':
+    from spinner import Spinner
+
+    spinner = Spinner()
+    try:
+        main()
+    except Exception as ex:
+        if spinner.busy:
+            spinner.stop()
+        print()
+        print("에러가 발생하였습니다.")
+        print("에러 코드:", ex)
+```
